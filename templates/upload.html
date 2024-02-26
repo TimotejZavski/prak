@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Images</title>
+</head>
+<body>
+    <h1>Images</h1>
+    <div>
+        {% for image in img_data %}
+        <img src="{{ url_for('static', filename='images/' + image) }}" style="max-width: 300px; max-height: 300px; margin: 10px;">
+    {% endfor %}
+    </div>
+</body>
+</html>

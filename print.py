@@ -106,8 +106,7 @@ while True:
         # Check za ERROR
         try:
             result = subprocess.run(['/Users/timzav/miniconda3/bin/python', p_file_Path], stderr=subprocess.PIPE, text=True)
-
-            #R1
+            #r1
             if result.returncode != 0:
                 e = str(result.stderr)
                 print(f"R1:{skupek_imen}")#Error in python script execution: {e}
@@ -147,5 +146,5 @@ if os.path.exists(folder_path):
 #varnostno
 #tplot ciscenje-datoteka
 with open(p_file_Path, 'w'):
-   pass
+    pass
 

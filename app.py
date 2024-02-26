@@ -1,29 +1,29 @@
-from app import app
+
 from flask import render_template, request, redirect, url_for
 import os
-import json
 import csv
 from openai import OpenAI
 import json
-import re
 import subprocess
-import sys
-import glob
-import time
-import subprocess
-import tiktoken
 
+
+from flask import Flask, render_template, send_from_directory
+
+app = Flask(__name__)
 
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'json', 'csv'}
+IMAGES_DIR = "/Users/timzav/Desktop/prak/static/images"
 json_f_path = 'uploads/output.json'
 
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
 
 @app.route('/')
 def index():
     return render_template('index.html')
+    
+@app.route('/test')
+def test():
+    return render_template('test.html')
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -61,16 +61,15 @@ def upload_file():
         else:
             print("Script execution failed.")
 
-        image_folder = '/Users/timzav/Desktop/prak/static/images'
     
-        # Get a list of all files in the folder
-        image_files = os.listdir(image_folder)
-        
-        # Filter out non-image files
-        image_files = [file for file in image_files if file.endswith(('.jpg', '.png', '.gif', '.jpeg'))]
-        
-        # Render the HTML template and pass the image files to it
-        return render_template('upload.html', image_files=image_files)
+        dir_path = "/Users/timzav/Desktop/prak/static/images"   # Directory containing the images
+        img_filenames = []                  # List to store image filenames
+        for _, __, fnames in os.walk(dir_path):
+            for f in fnames:                # Iterate over every file found in the directory
+                if f.lower().endswith(".jpg") or f.lower().endswith(".png"):      # Checking whether the file has .jpg/.png extension
+                    img_filenames.append(f)         # Adding the valid image filenames to our list
+        return render_template("upload.html", img_data=img_filenames)
+
     return 'Invalid file'
 
 # Convert CSV to JSON
@@ -117,5 +116,6 @@ def files_list(folder_path):
                 file_names.append(filename)
     return file_names
 
-folder_path = '/images/'
 
+if __name__ == '__main__':
+    app.run()
