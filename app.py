@@ -23,7 +23,13 @@ def index():
     
 @app.route('/test')
 def test():
-    return render_template('test.html')
+        dir_path = "/Users/timzav/Desktop/prak/static/images"   # Directory containing the images
+        img_filenames = []                  # List to store image filenames
+        for _, __, fnames in os.walk(dir_path):
+            for f in fnames:                # Iterate over every file found in the directory
+                if f.lower().endswith(".png"):      # Checking whether the file has .jpg/.png extension
+                    img_filenames.append(f)         # Adding the valid image filenames to our list
+        return render_template("test.html", img_data=img_filenames)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -62,13 +68,8 @@ def upload_file():
             print("Script execution failed.")
 
     
-        dir_path = "/Users/timzav/Desktop/prak/static/images"   # Directory containing the images
-        img_filenames = []                  # List to store image filenames
-        for _, __, fnames in os.walk(dir_path):
-            for f in fnames:                # Iterate over every file found in the directory
-                if f.lower().endswith(".jpg") or f.lower().endswith(".png"):      # Checking whether the file has .jpg/.png extension
-                    img_filenames.append(f)         # Adding the valid image filenames to our list
-        return render_template("upload.html", img_data=img_filenames)
+    # Adding the valid image filenames to our list
+        return render_template("upload.html")
 
     return 'Invalid file'
 

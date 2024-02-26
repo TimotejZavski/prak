@@ -85,20 +85,110 @@
             margin-right: 10px;
             color: #ffffff;
         }
+
+        body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+ 
+}
+
+.bar {
+  width: 10px;
+  height: 70px;
+  background: #fff;
+  display: inline-block;
+  transform-origin: bottom center;
+  border-top-right-radius: 20px;
+  border-top-left-radius: 20px;
+  /*   box-shadow:5px 10px 20px inset rgba(255,23,25.2); */
+  animation: loader 1.2s linear infinite;
+}
+.bar1 {
+  animation-delay: 0.1s;
+}
+.bar2 {
+  animation-delay: 0.2s;
+}
+.bar3 {
+  animation-delay: 0.3s;
+}
+.bar4 {
+  animation-delay: 0.4s;
+}
+.bar5 {
+  animation-delay: 0.5s;
+}
+.bar6 {
+  animation-delay: 0.6s;
+}
+.bar7 {
+  animation-delay: 0.7s;
+}
+.bar8 {
+  animation-delay: 0.8s;
+}
+
+@keyframes loader {
+  0% {
+    transform: scaleY(0.1);
+
+  }
+  50% {
+    transform: scaleY(1);
+    background: yellowgreen;
+  }
+  100% {
+    transform: scaleY(0.1);
+    background: transparent;
+  }
+}
+
     </style>
 </head>
 <body>
     <div class="container">
         <h1>chartMaker</h1>
-        <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
+        <form id="uploadForm" action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
             <input type="file" name="file" accept=".csv">
             <br><br>
             <input type="text" id="text1" name="text1" placeholder="Enter Description">
             <br><br>
             <input type="text" id="text2" name="text2" placeholder="Enter Task">
             <br><br>
-            <button type="submit"><span class="upload-icon">&#8679;</span> Upload File</button>
+            <button type="submit" id="uploadButton"><span class="upload-icon">&#8679;</span> Upload File</button>
         </form>
+
+        <div id="loader" style="display: none;">
+            <div class="bar bar1"></div>
+            <div class="bar bar2"></div>
+            <div class="bar bar3"></div>
+            <div class="bar bar4"></div>
+            <div class="bar bar5"></div>
+            <div class="bar bar6"></div>
+            <div class="bar bar7"></div>
+            <div class="bar bar8"></div>
+          </div>
+       
     </div>
+    <script>
+            document.getElementById("uploadForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent default form submission
+        document.getElementById("loader").style.display = "block"; // Show loader
+        var formData = new FormData(this);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', this.action, true);
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                window.location.replace("http://127.0.0.1:5000/test");// Once redirected, hide loader and then load images
+                window.location.href = xhr.responseText; // Redirect to the response URL (upload.html)
+            } else {
+                alert('An error occurred!');
+            }
+        };
+        xhr.send(formData);
+    });
+    </script>
+  
 </body>
 </html>
