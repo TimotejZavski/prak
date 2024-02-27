@@ -3,14 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>test</title>
+    <title>Beautiful Photo Gallery</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 30px;
+            color: #333;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr)); /* Adjusted image min-width */
+            gap: 20px;
+            justify-items: center;
+        }
+        .gallery img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        .gallery img:hover {
+            transform: scale(1.1); /* Increased hover scale */
+        }
+    </style>
 </head>
 <body>
-    <h1>test web</h1>
+    <h1>Beautiful Photo Gallery</h1>
 
-    {% for image in img_data %}
-        <img src="{{ url_for('static', filename='images/' + image) }}" style="max-width: 300px; max-height: 300px; margin: 10px;">
-    {% endfor %}
+    <div class="gallery">
+        {% for image in img_data %}
+            <a data-fancybox="gallery" data-src="{{ url_for('static', filename='images/' + image) }}" data-caption="{{ image }}">
+                <img src="{{ url_for('static', filename='images/' + image) }}" alt="{{ image }}">
+            </a>
+        {% endfor %}
+    </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('[data-fancybox="gallery"]').fancybox({
+                buttons: [
+                    'slideShow',
+                    'fullScreen',
+                    'download',
+                    'thumbs',
+                    'close'
+                ]
+            });
+        });
+    </script>
 </body>
 </html>
