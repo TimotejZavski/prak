@@ -7,6 +7,7 @@ import os
 import glob
 import time
 import tiktoken
+import ollama
 
 #api
 with open('/Users/timzav/Desktop/DataWizard/config.json') as f:
@@ -18,19 +19,7 @@ with open('/Users/timzav/Desktop/DataWizard/config.json') as f:
 
 """manjka def tokens_in():"""#mora bit za not, ven in skupaj
 
-def tokens_in(Task, context):
-    total_tokens = count_tokens(Task + context)
-    return total_tokens
 
-def tokens_out(input_string, token_length=4):
-    count = 0
-    for _ in range(0, len(input_string), token_length):
-        count += 1
-    return count
-
-def count_tokens(input_string):
-    total_tokens = tiktoken.count_tokens(input_string)
-    return total_tokens
 
 st = 0#za napake stet, kasnej break
 zacasen = ""# ce je napaka je to task
@@ -53,42 +42,41 @@ description = os.environ.get('DESCRIPTION')
 Task = os.environ.get('TASK')
 JsonfPath = os.environ.get('JSONFPATH')
 jsonString = os.environ.get('DATABLOCKEXAMPLE')
-
+choice = os.environ.get('CHOICE')
 
 
 jsonFolder = '/Users/timzav/Desktop/prak/uploads'
 
-inputs = f"EXAMPLE OF DATA FROM JSON FILE:'{jsonString}', DESCRIPTION:'{description}', FILE PATH:'{JsonfPath}'"
+inputs = f"EXAMPLE OF DATA FROM JSON FILE:'{jsonString}', DESCRIPTION:'{description}', JSON FILE PATH (file is HERE):'{JsonfPath}'"
                    
 
 folder_path = '/Users/timzav/Desktop/prak/static/images'
-context = f'''Respond with code ONLY simple and plain Python code, no comments/explanations. Result of your code must always be generated png images of charts based on given:
+context = f'''Respond with python code ONLY inside ```python CodeGoesHere ```, no comments/explanations. Write code that will PNG image of  chart based on task. Here is some additional information to help you get started:
   {inputs}, COLLOR PALLETE of chart must be:'monochrome blue palettes', RESOLUTION of chart(png image) must be:1920x1080
-  Save the charts as high-resolution PNG images to the '{folder_path}'.
+  Code should save image(s) here '{folder_path}'.
   '''
 
 
+
 while True:
-    if st <= 4:#3 krat lahka nardi napako
-        #s_time = time.time()
-        response = client.chat.completions.create(
-            model="gpt-4-1106-preview", 
-            messages=[
-                {"role": "system", "content": context},
-                {"role": "user", "content": Task}
-            ]
-        )
-        response = response.choices[0].message.content
-
-        #cas #imena so mela smisel - ne vec - ponovno majo, cas ga nima
-        """
-        e_time = time.time()
-        r_time = e_time - s_time
-        rounded_time_difference = round(r_time.total_seconds())
-
-        token_count = tokens_out(response, token_length=4)
-        print(f"Number of tokens (received): {token_count}, v {r_time} sekundah\n")
-        """
+    if st <= 4:
+        if choice == 'option1':
+            response = client.chat.completions.create(
+                model="gpt-4-1106-preview", 
+                messages=[
+                    {"role": "system", "content": context},
+                    {"role": "user", "content": Task}
+                ]
+            )
+            response = response.choices[0].message.content
+        elif choice == 'option2':
+            response = ollama.chat(model='deepseek-coder:6.7b', messages=[
+              {
+                'role': 'user',
+                'content': f"{context}, \n Task:{Task}",
+              },
+            ])
+            response = response['message']['content']
         
         match = re.search(r"```(?:\bpython\b)?(.*?)```", response, re.DOTALL)
 
@@ -109,34 +97,28 @@ while True:
             #r1
             if result.returncode != 0:
                 e = str(result.stderr)
-                print(f"R1:{skupek_imen}")#Error in python script execution: {e}
-                task = f'''This code:'{response}, generated only this images:'{skupek_imen()}' and gave this error:'{str(e)}' generate code for only the rest of images that didn't get to be created by given code.'''
+                task = f'''This code:'{response}, gave this error when run:\n {str(e)}. Rewrite whole code again to fix this error. Image names should be the same as before.'''
                 st = st + 1 
             else:
                 print(f"Python script executed successfully in {st} attempt")
                 break
             #R2  
         except subprocess.CalledProcessError as e:
-            print(f"R2:{skupek_imen}")#Tryes:'{st}'.Python script crashed with error: '{e.stderr}'
-            task = f'''This code:'{response}, generated only this images:'{skupek_imen()}' and gave this error:'{str(e)}' generate code for only the rest of images that didn't get to be created by given code.'''
+            task = f'''This code:'{response}, gave this error when run:\n {str(e)}. Rewrite whole code again to fix this error. Image names should be the same as before.'''
             st = st + 1
             #R3
         except Exception as e:
-            print(f"R3:{skupek_imen}")#f"Tryes:'{st}'. An unexpected error occurred: '{e}'
-            task = f'''This code:'{response}, generated only this images:'{skupek_imen()}' and gave this error:'{str(e)}' generate code for only the rest of images that didn't get to be created by given code.'''
+            task = f'''This code:'{response}, gave this error when run:\n {str(e)}. Rewrite whole code again to fix this error. Image names should be the same as before.'''
             st = st + 1
 
     else:
-
+        #zdej ko je fl ne pise vec ker je drugac laufana..mogu bi posilat nazaj appu napako - zaenkrat nepotrebno
         print(f"Attempts:'{st}'. Gave up at 4rd. imena\n:{skupek_imen()}")
-        print(f"token out:{tokens_out(response, token_length=4)}")
-        print(f"{tokens_in(Task, context)}")
         break
      
-
-
 #upload ciscenje-folder 
     #safety
+    """
 folder_path = '/Users/timzav/Desktop/prak/uploads'
 if os.path.exists(folder_path):
     file_paths = glob.glob(os.path.join(folder_path, '*'))
@@ -145,6 +127,6 @@ if os.path.exists(folder_path):
             os.remove(file_path)
 #varnostno
 #tplot ciscenje-datoteka
-with open(p_file_Path, 'w'):
-    pass
 
+
+"""

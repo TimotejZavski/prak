@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload File and Enter Text</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/slika.ico') }}">
     <style>
         * {
             box-sizing: border-box;
@@ -92,6 +93,7 @@
   display: flex;
   flex-direction: column;
   align-items: center !important;
+  padding: 5%;
 }
 
 .spinner {
@@ -193,21 +195,44 @@
     transform: translateY(-400%);
   }
 }
+select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+    border: 2px solid #ced4da;
+    cursor: pointer;
+}
+
+select:hover {
+    border-color: #007bff;
+    background-color: #e9ecef;
+}
 
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>chartMaker</h1>
-        <form id="uploadForm" action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
-            <input type="file" name="file" accept=".csv">
-            <br><br>
-            <input type="text" id="text1" name="text1" placeholder="Enter Description">
-            <br><br>
-            <input type="text" id="text2" name="text2" placeholder="Enter Task">
-            <br><br>
-            <button type="submit" id="uploadButton"><span class="upload-icon">&#8679;</span> Upload File</button>
-        </form>
+  <div class="container">
+    <h1>chartMaker</h1>
+    <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".csv">
+        <br><br>
+        <input type="text" id="text1" name="text1" placeholder="Enter Description">
+        <br><br>
+        <input type="text" id="text2" name="text2" placeholder="Enter Task">
+        <br><br>
+        <select name="choice" required>
+            <option value="">Select Processing Type</option>
+            <option value="option1">gpt-4-1106-preview (Server Side)</option>
+            <option value="option2">codellama:13b-instruct-q4_0 (Localy)</option>
+        </select>
+        <br><br>
+        <button type="submit" id="uploadButton">Upload File</button>
+    </form>
+</div>
 <!--"-->
         <div id="loader" style="display: none;" class="spinnerContainer">
   

@@ -20,24 +20,27 @@ json_f_path = 'uploads/output.json'
 BASE_URL = "http://127.0.0.1:5000"
 random_segment = secrets.token_urlsafe(8)  # Generates an 8-character random URL-safe string
 USER_URL = random_segment
+global FILENAME
+FILENAME = ""
 
 
 @app.route('/')
 def index():
     return render_template('index.html', random_segment=random_segment)
 
-
-
 @app.route(f'/{random_segment}')
+@app.route('/test')
 def test():
-        dir_path = "/Users/timzav/Desktop/prak/static/images"   # Directory containing the images
+        dir_path = "/Users/timzav/Desktop/prak/static/images" 
+        fl = FILENAME  # Directory containing the images
         img_filenames = []                  # List to store image filenames
         for _, __, fnames in os.walk(dir_path):
             for f in fnames:                # Iterate over every file found in the directory
                 if f.lower().endswith(".png"):      # Checking whether the file has .jpg/.png extension
                     img_filenames.append(f)         # Adding the valid image filenames to our list
-        return render_template("test.html", img_data=img_filenames)
+        return render_template("test.html", img_data=img_filenames, fl=fl)
 
+#vmesna funkcija
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -50,6 +53,7 @@ def upload_file():
         return redirect(request.url)
     if file and allowed_file(file.filename):
         filename = file.filename
+        FILENAME = file.filename
         file.save(os.path.join(UPLOAD_FOLDER, filename))
 
         csv_to_json(f'{os.path.join(UPLOAD_FOLDER, filename)}', f'{json_f_path}')
@@ -58,10 +62,12 @@ def upload_file():
 
         text1 = request.form['text1']
         text2 = request.form['text2']
+        choice = request.form['choice']
         os.environ['DESCRIPTION'] = text1
         os.environ['TASK'] = text2
         os.environ['JSONFPATH'] = json_f_path
         os.environ['DATABLOCKEXAMPLE'] = first_two_rows_json
+        os.environ['CHOICE'] = choice
 
         process = subprocess.Popen(['python', '/Users/timzav/Desktop/prak/print.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
