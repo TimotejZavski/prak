@@ -1,50 +1,42 @@
 
 import json
-import matplotlib.pyplot as plt
-import seaborn as sns
 import pandas as pd
-import os
+import matplotlib.pyplot as plt
+from matplotlib.colors import LinearSegmentedColormap
 
-# Load JSON data into a DataFrame
-with open('uploads/output.json', 'r') as file:
-    data = json.load(file)
+# Custom monochrome blue color palette
+cmap = LinearSegmentedColormap.from_list('monoblue', ['lightblue', 'mediumblue', 'darkblue'], N=256)
 
-# Create a DataFrame from JSON data
+# Load the data from the JSON file
+with open('uploads/output.json', 'r') as f:
+    data = json.load(f)
+
+# Convert the data to a pandas DataFrame
 df = pd.DataFrame(data)
 
-# Extract temperatures and elevation information
-df['January Avg. High (°C)'] = df['January(Avg. high °C (°F))'].apply(lambda x: float(x.split(' ')[0]))
-df['July Avg. High (°C)'] = df['July(Avg. high °C (°F))'].apply(lambda x: float(x.split(' ')[0]))
-df['Annual Avg. High (°C)'] = df['Annual(Avg. high °C (°F))'].apply(lambda x: float(x.split(' ')[0]))
-df['Elevation (m)'] = df['Elevation'].apply(lambda x: float(x.split('m')[0].strip()))
+# Drop rows with missing 'sex' column
+df = df.dropna(subset=['sex'])
 
-# Set the color palette for monochrome blue
-sns.set_palette(sns.color_palette("Blues"))
+# Convert numeric columns to the correct data type
+numeric_columns = ['\ufeffculmen_length_mm', 'culmen_depth_mm', 'flipper_length_mm', 'body_mass_g']
+df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric)
 
-# Create directory for saving images if it doesn't exist
-image_dir = '/Users/timzav/Desktop/prak/static/images'
-os.makedirs(image_dir, exist_ok=True)
+# Plot 1: Culmen length vs. Culmen depth
+plt.figure(figsize=(1920/96, 1080/96), dpi=96)  # Set figure size to 1920x1080
+plt.scatter(df['\ufeffculmen_length_mm'], df['culmen_depth_mm'], c=df['culmen_depth_mm'], cmap=cmap)
+plt.xlabel('Culmen Length (mm)')
+plt.ylabel('Culmen Depth (mm)')
+plt.title('Culmen Length vs Culmen Depth')
+plt.colorbar(label='Culmen Depth (mm)')
+plt.savefig('/Users/timzav/Desktop/prak/static/images/culmen_length_vs_depth.png')
+plt.close()
 
-# Plot January Average High Temperature
-plt.figure(figsize=(24, 13.5))
-sns.barplot(x='Community', y='January Avg. High (°C)', data=df)
-plt.title('January Average High Temperature (°C)')
-plt.xticks(rotation=90)
-plt.tight_layout()
-plt.savefig(f'{image_dir}/january_avg_high_temp.png')
-
-# Plot July Average High Temperature
-plt.figure(figsize=(24, 13.5))
-sns.barplot(x='Community', y='July Avg. High (°C)', data=df)
-plt.title('July Average High Temperature (°C)')
-plt.xticks(rotation=90)
-plt.tight_layout()
-plt.savefig(f'{image_dir}/july_avg_high_temp.png')
-
-# Plot Annual Average High Temperature
-plt.figure(figsize=(24, 13.5))
-sns.barplot(x='Community', y='Annual Avg. High (°C)', data=df)
-plt.title('Annual Average High Temperature (°C)')
-plt.xticks(rotation=90)
-plt.tight_layout()
-plt.savefig(f'{image_dir}/annual_avg_high_temp.png')
+# Plot 2: Flipper length vs. Body mass
+plt.figure(figsize=(1920/96, 1080/96), dpi=96)  # Set figure size to 1920x1080
+plt.scatter(df['flipper_length_mm'], df['body_mass_g'], c=df['body_mass_g'], cmap=cmap)
+plt.xlabel('Flipper Length (mm)')
+plt.ylabel('Body Mass (g)')
+plt.title('Flipper Length vs Body Mass')
+plt.colorbar(label='Body Mass (g)')
+plt.savefig('/Users/timzav/Desktop/prak/static/images/flipper_length_vs_body_mass.png')
+plt.close()
