@@ -17,7 +17,7 @@ ALLOWED_EXTENSIONS = {'json', 'csv'}
 IMAGES_DIR = "/Users/timzav/Desktop/prak/static/images"
 json_f_path = 'uploads/output.json'
 
-BASE_URL = "http://127.0.0.1:5000"
+
 random_segment = secrets.token_urlsafe(8)  # Generates an 8-character random URL-safe string
 USER_URL = random_segment
 global FILENAME

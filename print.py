@@ -56,11 +56,14 @@ inputs = f"EXAMPLE OF DATA FROM JSON FILE:'{jsonString}', DESCRIPTION:'{descript
                    
 
 folder_path = '/Users/timzav/Desktop/prak/static/images'
-context = f'''Respond with python code ONLY inside ```python ```, no comments/explanations. Write code that will PNG image of  chart based on task. Here is some additional information to help you get started:
+context = f'''Respond with python code ONLY inside ```python ```, no comments/explanations. Write code that will create PNG image showing chart based on data and task provided. Here is some additional information to help you get started:
   {inputs}, COLLOR PALLETE of chart must be:'monochrome blue palettes', RESOLUTION of chart(png image) must be:1920x1080
   Code should save image(s) here '{folder_path}'.
   '''
 
+Context = f'''
+Based on this: {inputs} create python code that will generate png charts based on this task: {Task}. Code can find data in this file: {JsonfPath} and should save image(s) here: {folder_path}.
+'''
 
 
 while True:
@@ -69,7 +72,7 @@ while True:
             response = client.chat.completions.create(
                 model="gpt-4-1106-preview", 
                 messages=[
-                    {"role": "system", "content": context},
+                    {"role": "system", "content": Context},
                     {"role": "user", "content": Task}
                 ]
             )
@@ -77,6 +80,15 @@ while True:
         elif choice == 'option2':
             client = Client(host='https://b410-35-187-243-128.ngrok-free.app')
             response = client.chat(model='mixtral', messages=[
+              {
+                'role': 'user',
+                'content': f'{context}, \n Your task is to:{Task}, for this create simple code with simple library usage.',
+              },
+            ])
+            response = response['message']['content']
+        elif choice == 'option3':
+            client = Client(host='https://d9b9-34-143-203-79.ngrok-free.app/')#vedno popravi link
+            response = client.chat(model='vicuna:33b', messages=[
               {
                 'role': 'user',
                 'content': f'{context}, \n Task:{Task}',
