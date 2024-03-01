@@ -1,42 +1,32 @@
 
 import json
-import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.colors import LinearSegmentedColormap
+import numpy as np
 
-# Custom monochrome blue color palette
-cmap = LinearSegmentedColormap.from_list('monoblue', ['lightblue', 'mediumblue', 'darkblue'], N=256)
-
-# Load the data from the JSON file
-with open('uploads/output.json', 'r') as f:
+# Load data from JSON file
+with open('/Users/timzav/Desktop/prak/uploads/output.json', 'r') as f:
     data = json.load(f)
 
-# Convert the data to a pandas DataFrame
-df = pd.DataFrame(data)
+# Extract x and y values for the chart
+x_values = np.array([d['culmen_length_mm'] for d in data if d['sex'] != ''])
+y_values = np.array([d['flipper_length_mm'] for d in data if d['sex'] != ''])
+sexes = [d['sex'].lower() for d in data if d['sex'] != '']
 
-# Drop rows with missing 'sex' column
-df = df.dropna(subset=['sex'])
+# Create a new figure with specified size
+fig, ax = plt.subplots(figsize=(1920/100, 1080/100))
 
-# Convert numeric columns to the correct data type
-numeric_columns = ['\ufeffculmen_length_mm', 'culmen_depth_mm', 'flipper_length_mm', 'body_mass_g']
-df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric)
+# Create a boxplot
+bp = ax.boxplot(y_values, vert=False, whis=[5, 95], showfliers=False)
 
-# Plot 1: Culmen length vs. Culmen depth
-plt.figure(figsize=(1920/96, 1080/96), dpi=96)  # Set figure size to 1920x1080
-plt.scatter(df['\ufeffculmen_length_mm'], df['culmen_depth_mm'], c=df['culmen_depth_mm'], cmap=cmap)
-plt.xlabel('Culmen Length (mm)')
-plt.ylabel('Culmen Depth (mm)')
-plt.title('Culmen Length vs Culmen Depth')
-plt.colorbar(label='Culmen Depth (mm)')
-plt.savefig('/Users/timzav/Desktop/prak/static/images/culmen_length_vs_depth.png')
-plt.close()
+# Set plot title and labels
+ax.set_title('Penguin Flipper Length by Culmen Length')
+ax.set_xlabel('Culmen Length (mm)')
+ax.set_ylabel('Flipper Length (mm)')
 
-# Plot 2: Flipper length vs. Body mass
-plt.figure(figsize=(1920/96, 1080/96), dpi=96)  # Set figure size to 1920x1080
-plt.scatter(df['flipper_length_mm'], df['body_mass_g'], c=df['body_mass_g'], cmap=cmap)
-plt.xlabel('Flipper Length (mm)')
-plt.ylabel('Body Mass (g)')
-plt.title('Flipper Length vs Body Mass')
-plt.colorbar(label='Body Mass (g)')
-plt.savefig('/Users/timzav/Desktop/prak/static/images/flipper_length_vs_body_mass.png')
-plt.close()
+# Set color palette
+monochrome_blue = ['#9fc5e8', '#64a9ce', '#3b8dd0']
+for i, b in enumerate(bp['boxes']):
+    b.set_facecolor(monochrome_blue[int(sexes[i] == 'male')])
+
+# Save plot to file
+plt.savefig('/Users/timzav/Desktop/prak/static/images/boxplot.png', dpi=100)

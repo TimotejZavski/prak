@@ -6,14 +6,20 @@ import sys
 import os
 import glob
 import time
-import tiktoken
+#import tiktoken
+from ollama import Client
+import requests
 import ollama
+from mistralai.client import MistralClient
+from mistralai.models.chat_completion import ChatMessage
 
 #api
 with open('/Users/timzav/Desktop/DataWizard/config.json') as f:
     config = json.load(f)
     kljuc = config['API_KEY']
     client = OpenAI(api_key=kljuc)
+
+#za mistral
 
 
 
@@ -45,13 +51,12 @@ jsonString = os.environ.get('DATABLOCKEXAMPLE')
 choice = os.environ.get('CHOICE')
 
 
-jsonFolder = '/Users/timzav/Desktop/prak/uploads'
 
 inputs = f"EXAMPLE OF DATA FROM JSON FILE:'{jsonString}', DESCRIPTION:'{description}', JSON FILE PATH (file is HERE):'{JsonfPath}'"
                    
 
 folder_path = '/Users/timzav/Desktop/prak/static/images'
-context = f'''Respond with python code ONLY inside ```python CodeGoesHere ```, no comments/explanations. Write code that will PNG image of  chart based on task. Here is some additional information to help you get started:
+context = f'''Respond with python code ONLY inside ```python ```, no comments/explanations. Write code that will PNG image of  chart based on task. Here is some additional information to help you get started:
   {inputs}, COLLOR PALLETE of chart must be:'monochrome blue palettes', RESOLUTION of chart(png image) must be:1920x1080
   Code should save image(s) here '{folder_path}'.
   '''
@@ -70,13 +75,15 @@ while True:
             )
             response = response.choices[0].message.content
         elif choice == 'option2':
-            response = ollama.chat(model='deepseek-coder:6.7b', messages=[
+            client = Client(host='https://b410-35-187-243-128.ngrok-free.app')
+            response = client.chat(model='mixtral', messages=[
               {
                 'role': 'user',
-                'content': f"{context}, \n Task:{Task}",
+                'content': f'{context}, \n Task:{Task}',
               },
             ])
             response = response['message']['content']
+
         
         match = re.search(r"```(?:\bpython\b)?(.*?)```", response, re.DOTALL)
 

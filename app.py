@@ -115,11 +115,7 @@ def get_first_two_rows(json_file_path):
         first_two_rows = data[:2]
         return json.dumps(first_two_rows, indent=4) 
 
-#ostale funkcije
-with open('/Users/timzav/Desktop/DataWizard/config.json') as f:
-    config = json.load(f)
-    kljuc = config['API_KEY']
-    client = OpenAI(api_key=kljuc)
+
 
 #file names list
 def files_list(folder_path):
