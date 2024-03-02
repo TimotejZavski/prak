@@ -57,7 +57,7 @@ inputs = f"EXAMPLE OF DATA FROM JSON FILE:'{jsonString}', DESCRIPTION:'{descript
 
 folder_path = '/Users/timzav/Desktop/prak/static/images'
 context = f'''Respond with python code ONLY inside ```python ```, no comments/explanations. Write code that will create PNG image showing chart based on data and task provided. Here is some additional information to help you get started:
-  {inputs}, COLLOR PALLETE of chart must be:'monochrome blue palettes', RESOLUTION of chart(png image) must be:1920x1080
+  {inputs}, COLLOR PALLETE of chart must be:'monochrome blue palettes', RESOLUTION of chart(png image) must be adjusted to each chart, only requirement is good resolution and readability.
   Code should save image(s) here '{folder_path}'.
   '''
 
@@ -72,7 +72,7 @@ while True:
             response = client.chat.completions.create(
                 model="gpt-4-1106-preview", 
                 messages=[
-                    {"role": "system", "content": Context},
+                    {"role": "system", "content": context},
                     {"role": "user", "content": Task}
                 ]
             )
@@ -86,12 +86,13 @@ while True:
               },
             ])
             response = response['message']['content']
+        #naj tudi op2 uporabla velik C, t lahka brises
         elif choice == 'option3':
-            client = Client(host='https://d9b9-34-143-203-79.ngrok-free.app/')#vedno popravi link
-            response = client.chat(model='vicuna:33b', messages=[
+            client = Client(host='https://adc3-34-125-246-255.ngrok-free.app')#vedno popravi link
+            response = client.chat(model='sammcj/smaug:72b-q4_k_m', messages=[
               {
                 'role': 'user',
-                'content': f'{context}, \n Task:{Task}',
+                'content': f'{Context}',
               },
             ])
             response = response['message']['content']

@@ -216,19 +216,19 @@ select:hover {
 </head>
 <body>
   <div class="container">
-    <h1>chartMaker</h1>
+    <h1>Char tMaker</h1>
     <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
         <input type="file" name="file" accept=".csv">
         <br><br>
-        <input type="text" id="text1" name="text1" placeholder="Enter Description">
+        <input type="text" id="text1" name="text1" placeholder="Describe Data">
         <br><br>
-        <input type="text" id="text2" name="text2" placeholder="Enter Task">
+        <input type="text" id="text2" name="text2" placeholder="What would you like to see?">
         <br><br>
         <select name="choice" required>
             <option value="">Select Processing Type</option>
             <option value="option1">gpt-4-1106-preview (OpenAI)</option>
-            <option value="option2">Mixtral 8x7B (Google Colab)</option>
-            <option value="option3">vicuna:33b (Google Colab)</option>
+            <option value="option2" disabled>Mixtral 8x7B (Google Colab)</option>
+            <option value="option3">sammcj/smaug:72b-q4_k_m (Google Colab)</option>
 
         </select>
         <br><br>

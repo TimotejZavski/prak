@@ -7,7 +7,7 @@ import json
 import subprocess
 import secrets
 
-
+import plotly.graph_objs as go
 from flask import Flask, render_template, send_from_directory
 
 app = Flask(__name__)
@@ -22,6 +22,25 @@ random_segment = secrets.token_urlsafe(8)  # Generates an 8-character random URL
 USER_URL = random_segment
 global FILENAME
 FILENAME = ""
+
+@app.route('/novo')
+def novo():
+   with open('/Users/timzav/Desktop/prak/uploads/output-nebrisi.json') as f:
+        data = json.load(f)
+    
+    # Extracting latency values for each model
+        models = []
+        latency_ane = []
+        latency_gpu = []
+        latency_cpu = []
+        for entry in data:
+                models.append(entry["Model"])
+                latency_ane.append(float(entry["Latency ANE"]))
+                latency_gpu.append(float(entry["Latency GPU"]))
+                latency_cpu.append(float(entry["Latency CPU"]))
+    
+    # Pass data to template
+        return render_template('novo.html', models=models, latency_ane=latency_ane, latency_gpu=latency_gpu, latency_cpu=latency_cpu)
 
 
 @app.route('/')
