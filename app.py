@@ -6,7 +6,7 @@ from openai import OpenAI
 import json
 import subprocess
 import secrets
-
+from flask import Flask, render_template, send_file
 import plotly.graph_objs as go
 from flask import Flask, render_template, send_from_directory
 
@@ -23,29 +23,21 @@ USER_URL = random_segment
 global FILENAME
 FILENAME = ""
 
+
 @app.route('/novo')
 def novo():
-   with open('/Users/timzav/Desktop/prak/uploads/output-nebrisi.json') as f:
-        data = json.load(f)
-    
-    # Extracting latency values for each model
-        models = []
-        latency_ane = []
-        latency_gpu = []
-        latency_cpu = []
-        for entry in data:
-                models.append(entry["Model"])
-                latency_ane.append(float(entry["Latency ANE"]))
-                latency_gpu.append(float(entry["Latency GPU"]))
-                latency_cpu.append(float(entry["Latency CPU"]))
-    
-    # Pass data to template
-        return render_template('novo.html', models=models, latency_ane=latency_ane, latency_gpu=latency_gpu, latency_cpu=latency_cpu)
+        return render_template('jav.html')
 
 
 @app.route('/')
 def index():
     return render_template('index.html', random_segment=random_segment)
+
+
+@app.route('/get_csv')
+def get_csv():
+    return send_file(json_f_path, as_attachment=True)
+
 
 @app.route(f'/{random_segment}')
 @app.route('/test')
@@ -82,11 +74,15 @@ def upload_file():
         text1 = request.form['text1']
         text2 = request.form['text2']
         choice = request.form['choice']
+        graphic = request.form['graphic']
+        st = request.form['ST']
         os.environ['DESCRIPTION'] = text1
         os.environ['TASK'] = text2
         os.environ['JSONFPATH'] = json_f_path
         os.environ['DATABLOCKEXAMPLE'] = first_two_rows_json
         os.environ['CHOICE'] = choice
+        os.environ['GRAPHIC'] = graphic
+        os.environ['ST'] = st
 
         process = subprocess.Popen(['python', '/Users/timzav/Desktop/prak/print.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 

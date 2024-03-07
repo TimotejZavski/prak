@@ -15,7 +15,7 @@
         
         body {
             font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
+            background-color: #f2f1eb;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -25,7 +25,7 @@
         .container {
             max-width: 400px;
             width: 90%;
-            background-color: #fff;
+            background-color: #f6f6f5;
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             padding: 30px;
@@ -39,7 +39,7 @@
         h1 {
             text-align: center;
             margin-bottom: 30px;
-            color: #333;
+            color: #ae5f40;
         }
 
         input[type="file"],
@@ -58,7 +58,7 @@
         input[type="file"]:hover,
         input[type="text"]:hover,
         button[type="submit"]:hover {
-            border-color: #007bff;
+            border-color: #ce8264;
             background-color: #e9ecef;
         }
 
@@ -72,14 +72,14 @@
         }
 
         button[type="submit"] {
-            background-color: #007bff;
+            background-color: #ae5f40;
             color: #fff;
             font-size: 16px;
             cursor: pointer;
         }
 
         button[type="submit"]:hover {
-            background-color: #0056b3;
+            background-color: #ce8264;
         }
 
         .upload-icon {
@@ -102,7 +102,7 @@
   display: grid;
   border: 4px solid #0000;
   border-radius: 50%;
-  border-right-color: #299fff;
+  border-right-color: #ce8264;
   animation: tri-spinner 1s infinite linear;
 }
 
@@ -150,7 +150,7 @@
   display: block;
   height: 100%;
   padding-left: 6px;
-  color: #299fff;
+  color: #ce8264;
   animation: cycle-words 5s infinite;
 }
 
@@ -208,7 +208,7 @@ select {
 }
 
 select:hover {
-    border-color: #007bff;
+    border-color: #ce8264;
     background-color: #e9ecef;
 }
 
@@ -216,7 +216,7 @@ select:hover {
 </head>
 <body>
   <div class="container">
-    <h1>Char tMaker</h1>
+    <h1>Chart Maker</h1>
     <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
         <input type="file" name="file" accept=".csv">
         <br><br>
@@ -228,10 +228,23 @@ select:hover {
             <option value="">Select Processing Type</option>
             <option value="option1">gpt-4-1106-preview (OpenAI)</option>
             <option value="option2" disabled>Mixtral 8x7B (Google Colab)</option>
-            <option value="option3">sammcj/smaug:72b-q4_k_m (Google Colab)</option>
-
+            <option value="option3" disabled>sammcj/smaug:72b-q4_k_m</option>
+            <option value="option4">Claude 3</option>
         </select>
         <br><br>
+        <select name="ST" required>
+          <option value="">Chart Style</option>
+          <option value="option1" selected>static PNG image</option>
+          <option value="option2">interactive WEB</option>
+        </select>
+        <br><br>
+        <select name="graphic" required>
+          <option value="">Chart Graphic</option>
+          <option value="option1">Classic</option>
+          <option value="option2">Modern</option>
+          <option value="option3">Hand-drawn/Sketch</option>
+          <option value="option4">Retro/Vintage</option>
+        </select>
         <button type="submit" id="uploadButton">Upload File</button>
     </form>
 </div>
@@ -250,22 +263,22 @@ select:hover {
                 <span class="word">insights</span>
               </div>
             </div>
-          </div>
+        </div>
             
    
        
     </div>
     <script>
             document.getElementById("uploadForm").addEventListener("submit", function(event) {
-        event.preventDefault(); // Prevent default form submission
-        document.getElementById("loader").style.display = "block"; // Show loader
+        event.preventDefault();
+        document.getElementById("loader").style.display = "block";
         var formData = new FormData(this);
         var xhr = new XMLHttpRequest();
         xhr.open('POST', this.action, true);
         xhr.onload = function() {
             if (xhr.status === 200) {
-                window.location.replace("http://127.0.0.1:5000/{{random_segment}}");// Once redirected, hide loader and then load images
-                window.location.href = xhr.responseText; // Redirect to the response URL (upload.html)
+                window.location.replace("http://127.0.0.1:5000/{{random_segment}}");
+                window.location.href = xhr.responseText;
             } else {
                 alert('An error occurred!');
             }
