@@ -15,7 +15,7 @@ from mistralai.models.chat_completion import ChatMessage
 import anthropic
 from anthropic import Anthropic
 #api
-with open('/Users/timzav/Desktop/DataWizard/config.json') as f:
+with open('/Users/timzav/Desktop/prak/print.py') as f:
     config = json.load(f)
     kljuc = config['API_KEY']
     client = OpenAI(api_key=kljuc)
@@ -50,13 +50,13 @@ Hand = '''
 Hand-drawn/Sketch: These charts mimic the appearance of hand-drawn illustrations, with imperfect lines, doodles, and handwritten labels. They have a playful and informal feel.
 '''
 Classic = '''
-normal chart style.
+COLLOR PALLETE of chart must be:'monochrome blue palettes'
 '''
 Modern = '''
 Modern: Modern chart styles often feature sleek designs, minimalist layouts, and vibrant color palettes. They may incorporate gradients, shadows, and other contemporary design elements.
 '''
 Retro = '''
-Retro/Vintage: Retro-style charts evoke a nostalgic aesthetic, often featuring faded colors, textured backgrounds, and retro typography. They may incorporate design elements reminiscent of a specific time period.
+Retro/Vintage: Retro-style charts evoke a nostalgic aesthetic, often featuring faded colors, textured backgrounds, and retro typography. They may incorporate design elements reminiscent of a specific time period. Resolution should match style.
 '''
 
 
@@ -92,7 +92,7 @@ while True:
     if counter <= 4:
         if choice == 'option1':
             response = client.chat.completions.create(
-                model="gpt-4-1106-preview", 
+                model="gpt-4", 
                 messages=[
                     {"role": "system", "content": context},
                     {"role": "user", "content": Task}
@@ -100,7 +100,7 @@ while True:
             )
             response = response.choices[0].message.content
         elif choice == 'option2':
-            client = Client(host='https://b410-35-187-243-128.ngrok-free.app')
+            client = Client(host='https://52ae-34-87-140-246.ngrok-free.app')
             response = client.chat(model='mixtral', messages=[
               {
                 'role': 'user',

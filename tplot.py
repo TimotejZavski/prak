@@ -1,37 +1,30 @@
 
-import pandas as pd
+import json
 import matplotlib.pyplot as plt
 import seaborn as sns
-import json
+import os
 
-# Load the data from the JSON file
-json_file_path = 'uploads/output.json'
-with open(json_file_path, 'r') as f:
+# Load data from JSON file
+with open('uploads/output.json') as f:
     data = json.load(f)
 
-# Create a DataFrame from the loaded data
-df = pd.DataFrame(data)
+# Extract sex column and create separate lists for male and female data
+males = [dict[k] for k, d in data for d in (dict,) if d['sex'] == 'MALE']
+females = [d for d in data if d['sex'] == 'FEMALE']
 
-# Ensure proper data types
-df['Age'] = df['Age'].astype(int)
-df['Height'] = df['Height'].astype(float)
-df['Weight'] = df['Weight'].astype(float)
-df['BMI'] = df['BMI'].astype(float)
-df['PhysicalActivityLevel'] = df['PhysicalActivityLevel'].astype(int)
+# Create subplots
+fig, axs = plt.subplots(1, 2, figsize=(20, 10))
 
-# Chart 1: Distribution of Obesity Categories
-plt.figure(figsize=(10, 6))
-obesity_counts = df['ObesityCategory'].value_counts()
-sns.barplot(x=obesity_counts.index, y=obesity_counts.values)
-plt.title("Distribution of Obesity Categories")
-plt.xlabel('Obesity Category')
-plt.ylabel('Count')
-plt.savefig('/Users/timzav/Desktop/prak/static/images/obesity_distribution.png', dpi=300)
+# Plot histogram of culmen length for males and females
+sns.histplot(data=males, x='culmen_length_mm', ax=axs[0], color='blue')
+sns.histplot(data=females, x='culmen_length_mm', ax=axs[0], color='lightblue')
+axs[0].set_title('Culmen Length (mm) by Sex')
 
-# Chart 2: Box plot of BMI by Physical Activity Level
-plt.figure(figsize=(12, 7))
-sns.boxplot(x='PhysicalActivityLevel', y='BMI', data=df)
-plt.title('BMI by Physical Activity Level')
-plt.xlabel('Physical Activity Level')
-plt.ylabel('BMI')
-plt.savefig('/Users/timzav/Desktop/prak/static/images/bmi_by_activity.png', dpi=300)
+# Plot histogram of flipper length for males and females
+sns.histplot(data=males, x='flipper_length_mm', ax=axs[1], color='blue')
+sns.histplot(data=females, x='flipper_length_mm', ax=axs[1], color='lightblue')
+axs[1].set_title('Flipper Length (mm) by Sex')
+
+# Save plot as PNG image with high resolution
+plt.savefig('/Users/timzav/Desktop/prak/static/images/chart.png', dpi=300, bbox_inches='tight')
+plt.close()
